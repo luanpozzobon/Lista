@@ -1,3 +1,16 @@
+"""
+Descrição:
+Este arquivo contém o código-fonte de um jogo de termoo em Python.
+
+Estratégia:
+O jogo termoo é implementado usando uma lista de palavras lidas do arquivo "lista_palavras.txt". Os jogadores tentam adivinhar a palavra oculta, inserindo letras em cada rodada.
+
+Estruturas Usadas:
+- Listas: Para armazenar palavras e letras inseridas pelos jogadores.
+- Dicionários: Para contar as ocorrências de letras em palavras.
+- Sets: Para rastrear letras corretas, letras incorretas e letras já usadas.
+"""
+
 arquivo = "lista_palavras.txt" # altere o caminho se necessário
                                # o ideal é que esteja no mesmo diretório do programa
 
@@ -12,7 +25,7 @@ from random import randint
 import unicodedata
 
 lista_termo = list(filter(lambda x : len(x) == 5, lista))
-teclado = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'ç'], ['z', 'x', 'c', 'v', 'b', 'n', 'm']]
+teclado = [['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'], ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'], ['z', 'x', 'c', 'v', 'b', 'n', 'm']]
 letras = [set() for _ in range(3)]
 tentativas = [ ]
 palavra = list(unicodedata.normalize("NFD", lista_termo[randint(0, len(lista_termo))]).encode("ascii", "ignore").decode("utf-8"))
@@ -24,6 +37,10 @@ NCONTEM = "\033[30m"
 RESET = "\033[0;1m"
 
 def print_game():
+    """
+    Imprime as tentaativas anteriores do jogo, incluindo as letras corretas, incorretas e letras já usadas.
+    Imprime as letras em formato de teclado, incluindo letras já acertadas, letras que não estão no lugar certo e letras erradas.
+    """
     for tentativa in tentativas:
         info_tentativa = { x : tentativa.count(x) for x in tentativa }
 
@@ -57,12 +74,22 @@ def print_game():
         print()
 
 def check_letter_in_position(letter, position):
+    """
+    Retorna se uma letra está na posição correta.
+    """
     return palavra[position] == letter
     
 def check_letter_in_word(letter):
+    """
+    Retorna se uma letra existe na palavra.
+    """
     return palavra.__contains__(letter)
     
 def check_attempt(attempt):
+    """
+    Verifica se a tentativa do jogador está correta, atualiza as letras corretas e incorretas.
+    Retorna True caso o jogador tenha acertado a palavra.
+    """
     for i in range(len(attempt)):
         if check_letter_in_word(attempt[i]):
             if check_letter_in_position(attempt[i], i):
@@ -76,9 +103,14 @@ def check_attempt(attempt):
 
 print_game()
 exit = 'n'
+print(palavra)
 while(exit != 's'):
     tentativa = list(input("Digite uma palavra: "))
-    tentativas.append(tentativa)
+    if len(tentativa) != 5:
+        print("Palavra inválida!")
+        continue
+    else:
+        tentativas.append(tentativa)
 
     if check_attempt(tentativa):
         print(RESET + "Você Venceu")
@@ -88,5 +120,3 @@ while(exit != 's'):
         exit = 's'
 
     print_game()
-
-# print(lista) # descomente para verificar se a lista está correta
